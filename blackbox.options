@@ -1,0 +1,30 @@
+// Blackbox Options
+
+
+// General Options
+AirportCode=XXX
+ServerUpdateRate=1000
+ServerPort=8081
+UsingMetric=true
+LogFormat=dev
+GpsProcessSpeed=0.01
+
+// GPS Options
+LocationUpdateRate=1000
+LogDirectory=./logs
+//GpsPort=/dev/ttyUSB1
+GpsPort=/dev/pts/13
+rscReadingMaxAge=30
+LatitudeOffset=0
+LongitudeOffset=0
+
+// Bowmonk Options
+BowmonkPort=/dev/ttyUSB0
+BowmonkBaudrate=9600
+BowmonkCommandPause=5
+BowmonkTimeout=500
+
+// Vaisala Options
+GpsBaudrate=115200
+VaisalaBaudrate=9600
+VaisalaPort=/dev/ttyUSB1
