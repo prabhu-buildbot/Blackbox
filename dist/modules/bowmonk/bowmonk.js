@@ -192,7 +192,7 @@ function bowmonkPortSetup(serverSocketIO) {
                 setBowmonkPortState(true);
                 log("bowmonk port opened");
                 setInterval(function() {
-                                        log(bowmonkReadingAvailable);
+                    log(bowmonkReadingAvailable);
                     if (bowmonkReadingAvailable === false) {
                         log("Bowmonk reading available");
                         lookForBowmonkReading();
@@ -209,7 +209,7 @@ function bowmonkDataReceived(bowmonkDataString) {
         if (bowmonkDataString.includes("#") == true) {
             bowmonkArmed = false;
             bowmonkReadingAvailable = true;
-            log("Bowmonk data received - Reading available");
+            log('Bowmonk reading available');
         }
         if (bowmonkDataString.includes("*") == true) {
             bowmonkReadingAvailable = false;
@@ -292,14 +292,12 @@ function _sendCommand_ReadMemoryFromRAMBase() {
                 case 0:
                     address = RAM_BASE_ADDRESS + offset;
                     bowmonkCommand = BOWMONK_PREFIX + COMMAND_READ_MEMORY + address.toString(16).toUpperCase().padStart(4, 0) + "\r";
-                    log("Test Number BowmonkCommand" + bowmonkCommand);
                     return [
                         4,
                         sendCommand(bowmonkCommand)
                     ];
                 case 1:
                     commandResponse = _state.sent();
-                    log("Command Response"  + commandResponse);
                     return [
                         2,
                         commandResponse
@@ -340,7 +338,6 @@ function _GetNextTestNumber() {
                         ];
                         try {
                             nextTestNumber = parseInt(commandResponse.substring(12, 12 + 2), 16);
-                            log("Reading the repsonse and etarcting the test NUmber" + nextTestNumber)
                         } catch (e) {
                             nextTestNumber = UNSET_VALUE;
                         }
@@ -368,7 +365,7 @@ function _pressAcceptKey() {
                     return [
                         4,
                         sendCommand(bowmonkCommand)
-                    ]; 
+                    ];
                 case 1:
                     commandResponse = _state.sent();
                     if (commandResponse.includes(COMMAND_ERROR) === false) {
@@ -417,7 +414,6 @@ function _getTestDataAddressNumber() {
                             firstByte = parseInt(commandResponse.substring(10, 10 + 2), 16);
                             secondByte = parseInt(commandResponse.substring(12, 12 + 2), 16);
                             dataAddress = firstByte * 256 + secondByte;
-                            log("DATAADDRESS IN BYTES" + dataAddress);
                         } catch (e) {
                             dataAddress = UNSET_VALUE;
                         }
@@ -431,29 +427,23 @@ function _getTestDataAddressNumber() {
     });
     return _getTestDataAddressNumber.apply(this, arguments);
 }
-function  getBowmonkTestData(testDataAddress) {
+function getBowmonkTestData(testDataAddress) {
     return _getBowmonkTestData.apply(this, arguments);
 }
 function _getBowmonkTestData() {
     _getBowmonkTestData = _async_to_generator(function(testDataAddress) {
         var readSucessful, bowmonkCommand, commandResponse, firstByte, secondByte;
         return _ts_generator(this, function(_state) {
-            log("I am Entering _getBowmonkTestData fucntion ")
-            log(_state.label)
             switch(_state.label){
                 case 0:
                     readSucessful = true;
-                    log("Test Data Address:", this.testDataAddress);
                     bowmonkCommand = BOWMONK_PREFIX + COMMAND_READ_MEMORY + testDataAddress.toString(16).toUpperCase().padStart(4, 0) + "\r";
-                    log("Bowmonk test data Command",bowmonkCommand);
                     return [
                         4,
-                        log("I am in Return"),
                         sendCommand(bowmonkCommand)
                     ];
                 case 1:
                     commandResponse = _state.sent();
-                    log(commandResponse);
                     if (commandResponse.includes(COMMAND_ERROR) === false) {
                         if (commandResponse.length == 0) return [
                             2,
@@ -461,7 +451,7 @@ function _getBowmonkTestData() {
                         ];
                         if (commandResponse.length != 76 && commandResponse.length != 77) return [
                             2,
-                            false  
+                            false
                         ];
                         if (commandResponse.substring(0, 6).toLowerCase().includes(":31a01") == false) return [
                             2,
@@ -478,12 +468,9 @@ function _getBowmonkTestData() {
                             mean = (firstByte * 256 + secondByte) / 10.0;
                             mean /= 100;
                             firstByte = parseInt(commandResponse.substring(42, 42 + 2), 16);
-                            log(firstByte);
                             secondByte = parseInt(commandResponse.substring(44, 44 + 2), 16);
-                            log(secondByte);
                             peak = (firstByte * 256 + secondByte) / 10.0;
                             peak /= 100;
-                            log(peak);
                             readSucessful = true;
                         } catch (e) {
                             readSucessful = false;
@@ -513,8 +500,7 @@ function _lookForBowmonkReading() {
             switch(_state.label){
                 case 0:
                     if (acquiringBowmonkReading === true) return [
-                        2,
-                        log("case" + _state.label)
+                        2
                     ];
                     acquiringBowmonkReading = true;
                     bowmonkReadingAvailable = false;
@@ -523,13 +509,12 @@ function _lookForBowmonkReading() {
                     _state.trys.push([
                         1,
                         29,
-                        30, 
+                        30,
                         31
                     ]);
                     return [
                         4,
-                        pressAcceptKey(true),
-                        log("case" + _state.label)
+                        pressAcceptKey(true)
                     ];
                 case 2:
                     acceptKeySucessful = _state.sent();
@@ -546,8 +531,7 @@ function _lookForBowmonkReading() {
                     _state.sent();
                     return [
                         4,
-                        pressAcceptKey(true),
-                        log("case" + _state.label)
+                        pressAcceptKey(true)
                     ];
                 case 4:
                     acceptKeySucessful = _state.sent();
@@ -556,16 +540,13 @@ function _lookForBowmonkReading() {
                 case 5:
                     return [
                         4,
-                        delay(_config.BOWMONK_COMMAND_PAUSE),
-                        log("case" + _state.label)
+                        delay(_config.BOWMONK_COMMAND_PAUSE)
                     ];
                 case 6:
                     _state.sent();
                     return [
                         4,
-                        GetNextTestNumber(),
-                        log("GetNextTestNumber" + _state.label),
-                        log("case" + _state.label)
+                        GetNextTestNumber()
                     ];
                 case 7:
                     nextTestNumber = _state.sent();
@@ -576,20 +557,16 @@ function _lookForBowmonkReading() {
                     log("getNextTestNumber() Failed - Trying Again");
                     return [
                         4,
-                        delay(_config.BOWMONK_COMMAND_PAUSE),
-                        log("case" + _state.label)
+                        delay(_config.BOWMONK_COMMAND_PAUSE)
                     ];
                 case 8:
                     _state.sent();
                     return [
                         4,
-                        GetNextTestNumber(),
-                        log("Getting NextTest Number"),
-                        log("case" + _state.label)
+                        GetNextTestNumber()
                     ];
                 case 9:
                     nextTestNumber = _state.sent();
-                    log("case" + _state.label)
                     _state.label = 10;
                 case 10:
                     if (!(nextTestNumber !== UNSET_VALUE)) return [
@@ -597,8 +574,6 @@ function _lookForBowmonkReading() {
                         23
                     ];
                     testNumber = nextTestNumber - 1;
-                    log("TestNumber - 1" , testNumber);
-                    log("case" + _state.label)
                     return [
                         4,
                         delay(_config.BOWMONK_COMMAND_PAUSE)
@@ -607,9 +582,7 @@ function _lookForBowmonkReading() {
                     _state.sent();
                     return [
                         4,
-                        log("Getting Test Data Address Number and test number is " + testNumber ),
-                        getTestDataAddressNumber(testNumber),
-                        log("case" + _state.label)
+                        getTestDataAddressNumber(testNumber)
                     ];
                 case 12:
                     testDataAddress = _state.sent();
@@ -620,20 +593,16 @@ function _lookForBowmonkReading() {
                     log("getTestDataAddressNumber() Failed - Trying Again");
                     return [
                         4,
-                        delay(_config.BOWMONK_COMMAND_PAUSE),
-                        log("case" + _state.label)
+                        delay(_config.BOWMONK_COMMAND_PAUSE)
                     ];
                 case 13:
                     _state.sent();
                     return [
                         4,
-                        getTestDataAddressNumber(testNumber),
-                        log("case" + _state.label)
+                        getTestDataAddressNumber(testNumber)
                     ];
                 case 14:
                     testDataAddress = _state.sent();
-                    log("Case " + 14)
-                    log("Got Test DATA Address" + testDataAddress)
                     _state.label = 15;
                 case 15:
                     if (!(testDataAddress !== UNSET_VALUE)) return [
@@ -648,10 +617,7 @@ function _lookForBowmonkReading() {
                     _state.sent();
                     return [
                         4,
-                        log(testDataAddress + "  test data address"),
-                        getBowmonkTestData(testDataAddress),
-                        log("case" + _state.label)
-                        
+                        getBowmonkTestData(testDataAddress)
                     ];
                 case 17:
                     testDataObtained = _state.sent();
@@ -668,20 +634,15 @@ function _lookForBowmonkReading() {
                     _state.sent();
                     return [
                         4,
-                        getBowmonkTestData(testDataAddress),
-                        log("case" + _state.label)
-
+                        getBowmonkTestData(testDataAddress)
                     ];
                 case 19:
                     testDataObtained = _state.sent();
-                    log("testdataObtAINED",testDataObtained)
                     _state.label = 20;
                 case 20:
-                    log("Case" + _state.label)
                     if (testDataObtained === true) {
-                        log("Entered");
                         if (peak >= .01 && peak <= .99) {
-                            log(peak);
+                            log("I am wirting the peak value"+peak)
                             if (_gps.gpsPortState === true && _gps.currentGPSData.valid === true) {
                                 bowmonkReading = {
                                     readingTime: _gps.currentGPSData.timedate,
@@ -719,8 +680,7 @@ function _lookForBowmonkReading() {
                     _state.sent();
                     return [
                         4,
-                        pressAcceptKey(true),
-                        log("case" + _state.label)
+                        pressAcceptKey(true)
                     ];
                 case 26:
                     acceptKeySucessful = _state.sent();
@@ -745,9 +705,6 @@ function _lookForBowmonkReading() {
                     ];
                 case 29:
                     error = _state.sent();
-                    log("_state data::::::::" + _state)
-                    log("_state Objectdata::::::::" + JSON.stringify(_state));
-
                     log("lookForBowmonkReading() Error: " + error);
                     return [
                         3,
